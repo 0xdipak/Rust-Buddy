@@ -2,6 +2,7 @@
 // region: --- Modules
 
 pub mod asst;
+pub mod msg;
 use crate::Result;
 use dotenv;
 
@@ -32,4 +33,3 @@ pub fn new_oa_client() -> Result<OaClient> {
 }
 
 // endregion: --- Client
-
