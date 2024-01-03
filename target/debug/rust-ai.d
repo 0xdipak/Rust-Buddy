@@ -1,0 +1,1 @@
+E:\Projects\Blockchain\RUST\rust-ai\target\debug\rust-ai.exe: E:\Projects\Blockchain\RUST\rust-ai\src\ais\asst\mod.rs E:\Projects\Blockchain\RUST\rust-ai\src\ais\mod.rs E:\Projects\Blockchain\RUST\rust-ai\src\error.rs E:\Projects\Blockchain\RUST\rust-ai\src\main.rs

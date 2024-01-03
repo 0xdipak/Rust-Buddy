@@ -1,0 +1,10 @@
+E:\Projects\Blockchain\RUST\rust-ai\target\debug\deps\eventsource_stream-3944712f555ab652.rmeta: C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\eventsource-stream-0.2.3\src\lib.rs C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\eventsource-stream-0.2.3\src\event.rs C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\eventsource-stream-0.2.3\src\event_stream.rs C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\eventsource-stream-0.2.3\src\parser.rs C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\eventsource-stream-0.2.3\src\traits.rs C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\eventsource-stream-0.2.3\src\utf8_stream.rs
+
+E:\Projects\Blockchain\RUST\rust-ai\target\debug\deps\eventsource_stream-3944712f555ab652.d: C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\eventsource-stream-0.2.3\src\lib.rs C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\eventsource-stream-0.2.3\src\event.rs C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\eventsource-stream-0.2.3\src\event_stream.rs C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\eventsource-stream-0.2.3\src\parser.rs C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\eventsource-stream-0.2.3\src\traits.rs C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\eventsource-stream-0.2.3\src\utf8_stream.rs
+
+C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\eventsource-stream-0.2.3\src\lib.rs:
+C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\eventsource-stream-0.2.3\src\event.rs:
+C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\eventsource-stream-0.2.3\src\event_stream.rs:
+C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\eventsource-stream-0.2.3\src\parser.rs:
+C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\eventsource-stream-0.2.3\src\traits.rs:
+C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\eventsource-stream-0.2.3\src\utf8_stream.rs:

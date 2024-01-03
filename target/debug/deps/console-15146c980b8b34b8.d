@@ -1,0 +1,11 @@
+E:\Projects\Blockchain\RUST\rust-ai\target\debug\deps\console-15146c980b8b34b8.rmeta: C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\console-0.15.7\src\lib.rs C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\console-0.15.7\src\common_term.rs C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\console-0.15.7\src\kb.rs C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\console-0.15.7\src\term.rs C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\console-0.15.7\src\utils.rs C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\console-0.15.7\src\windows_term\mod.rs C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\console-0.15.7\src\ansi.rs
+
+E:\Projects\Blockchain\RUST\rust-ai\target\debug\deps\console-15146c980b8b34b8.d: C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\console-0.15.7\src\lib.rs C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\console-0.15.7\src\common_term.rs C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\console-0.15.7\src\kb.rs C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\console-0.15.7\src\term.rs C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\console-0.15.7\src\utils.rs C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\console-0.15.7\src\windows_term\mod.rs C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\console-0.15.7\src\ansi.rs
+
+C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\console-0.15.7\src\lib.rs:
+C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\console-0.15.7\src\common_term.rs:
+C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\console-0.15.7\src\kb.rs:
+C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\console-0.15.7\src\term.rs:
+C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\console-0.15.7\src\utils.rs:
+C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\console-0.15.7\src\windows_term\mod.rs:
+C:\Users\dipak\.cargo\registry\src\index.crates.io-6f17d22bba15001f\console-0.15.7\src\ansi.rs:
