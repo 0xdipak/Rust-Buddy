@@ -1,12 +1,17 @@
+use serde::{Deserialize, Serialize};
+use std::collections::{HashMap, HashSet};
+use std::path::Path;
 use std::time::Duration;
-use serde::{Serialize, Deserialize};
 use tokio::time::sleep;
 
 use crate::ais::msg::get_text_content;
 use crate::ais::{msg::user_msg, OaClient};
+use crate::utils::cli::{ico_check, ico_deleted_ok, ico_err, ico_uploaded, ico_uploading};
+use crate::utils::files::XFile;
 use crate::Result;
-use crate::utils::cli::{ico_deleted_ok, ico_check};
-use async_openai::types::{CreateRunRequest, RunStatus};
+use async_openai::types::{
+    CreateAssistantFileRequest, CreateFileRequest, CreateRunRequest, RunStatus,
+};
 use console::Term;
 use derive_more::{Deref, Display, From};
 
@@ -22,7 +27,6 @@ use async_openai::{
 // region: --- Constants
 const DEFAULT_QUERY: &[(&str, &str)] = &[("limit", "100")];
 const POLLING_DURATION_MS: u64 = 500;
-
 // endregion: --- Constants
 
 // region: --- Types
@@ -115,8 +119,20 @@ pub async fn upload_instructions(
 
 pub async fn delete(oac: &OaClient, asst_id: &AsstId) -> Result<()> {
     let oa_assts = oac.assistants();
+    let oa_files = oac.files();
 
-    // TODO: delete files
+    // First delete the files associated to this assistant.
+    for file_id in get_file_hashmap(oac, asst_id).await?.into_values() {
+        let del_res = oa_files.delete(&file_id).await;
+        // Might be already deleted, that's ok for now.
+        if del_res.is_ok() {
+            println!("{} file deleted - {file_id}", ico_deleted_ok());
+        }
+    }
+
+    // No need to delete assistant files since we delete the assistant.
+    
+
 
     // -- Delete assistant
     oa_assts.delete(asst_id).await?;
@@ -187,20 +203,17 @@ pub async fn run_thread_msg(
         }
         sleep(Duration::from_millis(POLLING_DURATION_MS)).await;
     }
-
 }
 
-
-
 pub async fn get_first_thread_msg_content(oac: &OaClient, thread_id: &ThreadId) -> Result<String> {
-    static QUERY:[(&str, &str); 1] = [("limit", "1")];
+    static QUERY: [(&str, &str); 1] = [("limit", "1")];
 
     let messages = oac.threads().messages(thread_id).list(&QUERY).await?;
     let msg = messages
-    .data
-    .into_iter()
-    .next()
-    .ok_or_else(|| "No message found".to_string())?;
+        .data
+        .into_iter()
+        .next()
+        .ok_or_else(|| "No message found".to_string())?;
 
     let text = get_text_content(msg)?;
 
@@ -208,3 +221,120 @@ pub async fn get_first_thread_msg_content(oac: &OaClient, thread_id: &ThreadId) 
 }
 
 // endregion --- Thread
+
+// region: --- Files
+
+/// returns the file id by file name hashmap.
+pub async fn get_file_hashmap(oac: &OaClient, asst_id: &AsstId) -> Result<HashMap<String, FileId>> {
+    // get all asst files (files do not have .name)
+    let oa_assts = oac.assistants();
+    let oa_asst_files = oa_assts.files(asst_id);
+    let asst_files = oa_asst_files.list(DEFAULT_QUERY).await?.data;
+    let asst_file_ids: HashSet<String> = asst_files.into_iter().map(|f| f.id).collect();
+
+    // Get all files for org (those files have .filename)
+    let oa_files = oac.files();
+    let org_files = oa_files.list().await?.data; // need changes
+
+    // Build or file_name:file_id hashmap
+    let file_id_by_name: HashMap<String, FileId> = org_files
+        .into_iter()
+        .filter(|org_file| asst_file_ids.contains(&org_file.id))
+        .map(|org_file| (org_file.filename, org_file.id.into()))
+        .collect();
+
+    Ok(file_id_by_name)
+}
+
+/// Uploads a file to an assistant (dirst to the account, then attaches to asst)
+pub async fn upload_file_by_name(
+    oac: &OaClient,
+    asst_id: &AsstId,
+    file: &Path,
+    force: bool,
+) -> Result<(FileId, bool)> {
+    let file_name = file.x_file_name();
+    let mut file_id_by_name = get_file_hashmap(oac, asst_id).await?;
+
+    let file_id = file_id_by_name.remove(file_name);
+
+    // If not force and file already created, return early.
+    if !force {
+        if let Some(file_id) = file_id {
+            return Ok((file_id, false));
+        }
+    }
+
+    // if we have old file_id, we delete the file.
+    if let Some(file_id) = file_id {
+        // Delete the org file
+        let oa_files = oac.files();
+        if let Err(err) = oa_files.delete(&file_id).await {
+            println!(
+                "{} Can't delete file '{}'\n  cause: {}",
+                ico_err(),
+                file.to_string_lossy(),
+                err
+            );
+        }
+
+        // Delete the asst_file association
+        let oa_assts = oac.assistants();
+        let oa_assts_files = oa_assts.files(asst_id);
+        if let Err(err) = oa_assts_files.delete(&file_id).await {
+            println!(
+                "{} Can't remove assistant file '{}'\n  cause: {}",
+                ico_err(),
+                file.x_file_name(),
+                err
+            );
+        }
+    }
+
+    // Upload and attach the file
+    let term = Term::stdout();
+
+    // Print uploading
+    term.write_line(&format!(
+        "{} Uploading file '{}'",
+        ico_uploading(),
+        file.x_file_name()
+    ))?;
+
+    // Upload file
+    let oa_files = oac.files();
+    let oa_file = oa_files
+        .create(CreateFileRequest {
+            file: file.into(),
+            purpose: "assistants".into(),
+        })
+        .await?;
+
+    // Update print
+    term.clear_last_lines(1)?;
+    term.write_line(&format!(
+        "{} Uploaded file '{}'",
+        ico_uploaded(),
+        file.x_file_name()
+    ))?;
+
+    // Attach file to assistant
+    let oa_assts = oac.assistants();
+    let oa_assts_files = oa_assts.files(asst_id);
+    let asst_file_obj = oa_assts_files
+        .create(CreateAssistantFileRequest {
+            file_id: oa_file.id.clone(),
+        })
+        .await?;
+
+    // Assert warning
+    if oa_file.id != asst_file_obj.id {
+        println!(
+            "SHOULD NOT HAPPEN, File id not matching {} {}",
+            oa_file.id, asst_file_obj.id
+        )
+    }
+
+    Ok((asst_file_obj.id.into(), true))
+}
+// endregion: --- Files

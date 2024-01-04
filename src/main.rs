@@ -6,10 +6,10 @@ mod buddy;
 mod error;
 mod utils;
 
-use ais::new_oa_client;
+// use ais::new_oa_client;
 use textwrap::wrap;
 
-use crate::{ais::asst::{self, run_thread_msg, CreateConfig}, buddy::Buddy, utils::cli::{prompt, ico_res, text_res, ico_err}};
+use crate::{ buddy::Buddy, utils::cli::{prompt, ico_res, text_res, ico_err}};
 
 pub use self::error::{Error, Result};
 
@@ -64,9 +64,9 @@ impl Cmd {
 
 
 async fn start() -> Result<()> {
-    let mut buddy = Buddy::init_form_dir(DEFAULT_DIR, false).await?;
+    let  buddy = Buddy::init_form_dir(DEFAULT_DIR, false).await?;
 
-    let mut conv = buddy.load_or_create_conv(false).await?;
+    let  conv = buddy.load_or_create_conv(false).await?;
 
     loop {
         println!();
@@ -89,6 +89,3 @@ async fn start() -> Result<()> {
 
     Ok(())
 }
-
-
-// 2.13.57
