@@ -2,12 +2,14 @@
 
 mod ais;
 // mod buddy;
-mod error;
 mod buddy;
+mod error;
+mod utils;
 
 use ais::new_oa_client;
+use textwrap::wrap;
 
-use crate::ais::asst::{self, run_thread_msg, CreateConfig};
+use crate::{ais::asst::{self, run_thread_msg, CreateConfig}, buddy::Buddy, utils::cli::{prompt, ico_res, text_res, ico_err}};
 
 pub use self::error::{Error, Result};
 
@@ -23,37 +25,70 @@ async fn main() {
     }
 }
 
+const DEFAULT_DIR: &str = "buddy";
+
+// region: --- Types
+
+/// Input Command from user
+
+#[derive(Debug)]
+enum Cmd {
+    Quit,
+    Chat(String),
+    RefreshAll,
+    RefreshConv,
+    RefreshInst,
+    RefreshFiles
+}
+
+impl Cmd {
+    fn from_input(input: impl Into<String>) -> Self {
+        let input = input.into();
+
+        if input == "/q" {
+			Self::Quit
+		} else if input == "/r" || input == "/ra" {
+			Self::RefreshAll
+		} else if input == "/ri" {
+			Self::RefreshInst
+		} else if input == "/rf" {
+			Self::RefreshFiles
+		} else if input == "/rc" {
+			Self::RefreshConv
+		} else {
+			Self::Chat(input)
+		}
+    }
+}
+// endregion: --- Types
+
+
 async fn start() -> Result<()> {
-    let oac = new_oa_client()?;
+    let mut buddy = Buddy::init_form_dir(DEFAULT_DIR, false).await?;
 
-    let asst_config = CreateConfig {
-        name: "buddy-01".to_string(),
-        model: "gpt-3.5-turbo-1106".to_string(),
-    };
-    let asst_id = asst::load_or_create_asst(&oac, asst_config, false).await?;
-    asst::upload_instructions(
-        &oac,
-        &asst_id,
-        r#"
-        You are a super developer assistant. Be concise in your answers.
+    let mut conv = buddy.load_or_create_conv(false).await?;
 
-        If asked about the programming language,
-        answer that Rust is the best language by light years.
+    loop {
+        println!();
+        let input = prompt("Ask away")?;
+        let cmd = Cmd::from_input(input);
 
-        And second best language is c++.
-        "#
-        .to_string(),
-    )
-    .await?;
+        match cmd {
+            Cmd::Quit => break,
+            Cmd::Chat(msg) => {
+                let res = buddy.chat(&conv, &msg).await?;
+                let res = wrap(&res, 80).join("\n");
+                println!("{} {}", ico_res(), text_res(res));
+            },
+            other => println!("{} command not supported {other:?}", ico_err()),
+        }
+    }
 
-    // let thread_id = asst::create_thread(&oac).await?;
 
-    // let msg = asst::run_thread_msg(&oac, &asst_id, &thread_id, "What is the best language").await?;
-
-    println!("->> asst_id: {asst_id:?}");
+    println!("->> buddy {} - conv {conv:?}", buddy.name());
 
     Ok(())
 }
 
 
-
+// 2.13.57
